@@ -4,30 +4,22 @@ require run.fs
 1024 constant max-line
 create temp-line max-line chars allot
 
-( check if file read was successfull )
-: read-check ( n flag ior -- n if? ) drop ;
-
 ( read up to max-line characters into the input buffer )
-: read-from-stdin-line ( -- buffer n) temp-line max-line stdin read-line
-read-check if 
-	temp-line
-else 
-	0 = if 
-		s"  " .s
-	else
-		." Error reading from stdin" cr bye 
-	then
-then ;
-
-: input-loop begin 
-	." >>> " read-from-stdin-line 
-	( read until the program is killed )
-	dup 0 = if 
-		drop leave 
+: read-from-stdin-line ( -- buffer n flag? ) 
+	temp-line max-line stdin read-line throw ( n flag )
+	( if the flag is false then we are at eof )
+	if 
 	else 
-		( the pointer and length are in the wrong order so swap them and run )
-		cr swap run 
-	then 
-again ;
+		cr ." Exiting..." cr bye 
+	then ( n )
+	temp-line swap ( ptr n )
+;
+
+: input-loop 
+begin 
+	." >>> " read-from-stdin-line ( ptr n )
+	run
+again 
+;
 
 : runRepl ." Hello lox repl" cr input-loop ;
