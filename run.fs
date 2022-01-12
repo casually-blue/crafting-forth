@@ -1,1 +1,1 @@
-: run ." running: " type cr ;
+: run ( n line -- ) ." running: " type cr ;
