@@ -5,7 +5,7 @@ require run_file.fs
 argc @ 1 -
 dup 1 > if 
 	." Usage: gforth lox.fs [script]" cr
-else dup 1 = if
+else 1 = if
 	1 arg runFile
 else 
 	runRepl
