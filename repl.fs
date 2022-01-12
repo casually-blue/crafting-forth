@@ -4,18 +4,29 @@ require run.fs
 1024 constant max-line
 create temp-line max-line chars allot
 
+( check if file read was successfull )
+: read-check ( n flag ior -- n if? ) drop ;
+
 ( read up to max-line characters into the input buffer )
-: read-from-stdin-line ( -- n buffer ) temp-line max-line accept temp-line swap ;
+: read-from-stdin-line ( -- buffer n) temp-line max-line stdin read-line
+read-check if 
+	temp-line
+else 
+	0 = if 
+		s"  " .s
+	else
+		." Error reading from stdin" cr bye 
+	then
+then ;
 
 : input-loop begin 
 	." >>> " read-from-stdin-line 
-	( if the line has zero characters exit 
-	TODO: This should actually check if we reached end of stdin instead of just checking zero characters )
+	( read until the program is killed )
 	dup 0 = if 
 		drop leave 
 	else 
 		( the pointer and length are in the wrong order so swap them and run )
-		cr run 
+		cr swap run 
 	then 
 again ;
 
